@@ -1,7 +1,6 @@
 package com.gdeguzman.springboot.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gdeguzman.springboot.entity.Customer;
 import com.gdeguzman.springboot.repository.CustomerRepository;
+import com.gdeguzman.springboot.service.CustomerService;
 
 
 @RestController
@@ -24,20 +24,23 @@ public class CustomerController implements CrudControllerInterface<Customer>{
 	@Autowired
 	CustomerRepository repository;	
 	
+	@Autowired
+	CustomerService service;
+	
 		
 	@RequestMapping("/findall")
 	public List<Customer>findAll()
 	{			
-		return repository.findAll();		
+		return service.findAll();		
 	}
 		
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	@GetMapping("/{id}")
 	public ResponseEntity<String> findById(@PathVariable int id) {
-		Optional<Customer> obj = repository.findById(Integer.valueOf(id));
-		if(obj.isPresent()) {
-			return new ResponseEntity(obj.get(),HttpStatus.OK);
+		Customer obj = service.findById(id);
+		if(obj != null) {
+			return new ResponseEntity(obj,HttpStatus.OK);
 		}else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}	
@@ -47,9 +50,9 @@ public class CustomerController implements CrudControllerInterface<Customer>{
 	@RequestMapping("/findbyid")
 	public ResponseEntity<String> findById(@RequestBody Customer entity)
 	{		
-		Optional<Customer> obj = repository.findById(Integer.valueOf(entity.getCustomerid()));
-		if(obj.isPresent()) {
-			return new ResponseEntity(obj.get(),HttpStatus.OK);
+		Customer obj = service.findById(entity.getCustomerid());
+		if(obj != null) {
+			return new ResponseEntity(obj,HttpStatus.OK);
 		}else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}		
@@ -60,7 +63,7 @@ public class CustomerController implements CrudControllerInterface<Customer>{
 	{
 		if(null != entity) {
 			try {
-				repository.save(entity);
+				service.save(entity);
 				return ResponseEntity.status(HttpStatus.OK).build();
 			} catch (Exception e) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -74,8 +77,8 @@ public class CustomerController implements CrudControllerInterface<Customer>{
 	{
 		if(null != entity) {
 			try {
-				if(repository.existsById(entity.getCustomerid())) {
-				repository.save(entity);
+				if(service.existsById(entity.getCustomerid())) {
+					service.save(entity);
 				return ResponseEntity.status(HttpStatus.OK).build();
 				}else {
 					return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -93,8 +96,8 @@ public class CustomerController implements CrudControllerInterface<Customer>{
 	{
 		if(null != entity) {
 			try {
-				if(repository.existsById(entity.getCustomerid())) {
-				repository.delete(entity);
+				if(service.existsById(entity.getCustomerid())) {
+				service.delete(entity);
 				return ResponseEntity.status(HttpStatus.OK).build();
 				}else {
 					return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

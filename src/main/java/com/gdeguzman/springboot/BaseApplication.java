@@ -11,20 +11,19 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
 import com.gdeguzman.springboot.entity.Basket;
-import com.gdeguzman.springboot.entity.BasketItem;
 import com.gdeguzman.springboot.entity.Customer;
 import com.gdeguzman.springboot.entity.Product;
-import com.gdeguzman.springboot.repository.CustomerRepository;
-import com.gdeguzman.springboot.repository.ProductRepository;
+import com.gdeguzman.springboot.service.CustomerService;
+import com.gdeguzman.springboot.service.ProductService;
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class BaseApplication {
-
-	@Autowired
-	CustomerRepository custRepo;
 	
 	@Autowired
-	ProductRepository productRepo;
+	ProductService productService;
+	
+	@Autowired
+	CustomerService custService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(BaseApplication.class, args);
@@ -34,11 +33,11 @@ public class BaseApplication {
 	public void PostStartupProcess() {
 		
 		//create productList
-		productRepo.save(new Product(1,"Palmolive","Hair Shampoo",25.00));
-		productRepo.save(new Product(2,"Safeguard","Body Soap",45.00));
-		productRepo.save(new Product(3,"Colgate","Toothpaste",100.00));
-		productRepo.save(new Product(4,"Gardenia Bread","Tasty Bread",65.00));
-		productRepo.save(new Product(5,"Greencross","Alcohol",50.00));
+		productService.save(new Product(1,"Palmolive","Hair Shampoo",25.00));
+		productService.save(new Product(2,"Safeguard","Body Soap",45.00));
+		productService.save(new Product(3,"Colgate","Toothpaste",100.00));
+		productService.save(new Product(4,"Gardenia Bread","Tasty Bread",65.00));
+		productService.save(new Product(5,"Greencross","Alcohol",50.00));
 		
 		
 		//create customer
@@ -60,7 +59,7 @@ public class BaseApplication {
 		 * 
 		 * cust.setBaskets(basketList);
 		 */
-		custRepo.save(cust);
+		custService.save(cust);
 		
 
 	}
